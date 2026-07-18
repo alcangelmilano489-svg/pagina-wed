@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escuela de Cuadros</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1>Escuela de Cuadros</h1>
+    <p>Formación para la transformación social</p>
+
+    <h2>Crear nueva publicación</h2>
+    <form action="/publicar" method="POST" enctype="multipart/form-data">
+        <input type="text" name="titulo" placeholder="Título de la noticia" required>
+        <br><br>
+        <textarea name="contenido" placeholder="Escribe tu noticia aquí..." required></textarea>
+        <br><br>
+        <input type="text" name="autor" placeholder="Autor" required>
+        <br><br>
+        <label>Selecciona una imagen:</label>
+        <input type="file" name="imagen" accept="image/*">
+        <br><br>
+        <button type="submit">Publicar Noticia con Foto</button>
+    </form>
+
+    <h2>Muro de Noticias</h2>
+    {% for n in noticias %}
+        <div style="border: 2px solid #333; padding: 15px; margin-bottom: 20px; background-color: #f9f9f9;">
+            <h3>{{ n.titulo }}</h3>
+            
+            {% if n.imagen %}
+                <img src="{{ url_for('static', filename='uploads/' + n.imagen) }}" width="300" style="display:block; margin-bottom:10px;">
+            {% endif %}
+            
+            <p>{{ n.contenido }}</p>
+            <small><strong>Autor:</strong> {{ n.autor }}</small>
+
+            <hr>
+            <h4>Comentarios:</h4>
+            <ul>
+                {% for comentario in n.comentarios %}
+                    <li>{{ comentario }}</li>
+                {% endfor %}
+            </ul>
+
+            <form action="/comentar" method="POST">
+                <input type="hidden" name="noticia_id" value="{{ loop.index0 }}">
+                <input type="text" name="texto_comentario" placeholder="Escribe un comentario..." required>
+                <button type="submit">Comentar</button>
+            </form>
+        </div>
+    {% endfor %}
+
+</body>
+</html>
